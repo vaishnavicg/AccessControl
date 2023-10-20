@@ -103,7 +103,63 @@ swapoff -a  <<<<<<<< just disable it in /etc/fstab instead
 apt-get update
 apt-get install -y apt-transport-https ca-certificates curl
 ```
+<br>
+<br>
+14 .  These two commands together download the GPG key for the Kubernetes repository, and then add a new entry to your system's package sources list (/etc/apt/sources.list.d/kubernetes.list) that points to the Kubernetes repository using the GPG key for verification.
 
+```
+curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+```
+<br>
+<br>
+15 .  Update and reboot
+
+```
+apt-get update
+reboot
+sudo -s
+```
+<br>
+<br>
+16 .The first command installs specific versions of Kubernetes components, and the second command marks these components as "held" to prevent automatic updates. 
+
+```
+apt-get install -y kubelet=1.26.1-00 kubeadm=1.26.1-00 kubectl=1.26.1-00
+apt-mark hold kubelet kubeadm kubectl
+```
+<br>
+<br>
+17 . check swap config, ensure swap is 0
+
+```
+free -m
+```
+<br>
+<br>
+18 . After running this command, it will generate a set of instructions and commands that you should follow to configure the kubeconfig for your user and join worker nodes to the cluster.
+
+```
+### ONLY ON CONTROL NODE .. control plane install:
+kubeadm init --pod-network-cidr 10.10.0.0/16 --kubernetes-version 1.26.1 --node-name k8s-control
+```
+19 .  The commands  provided are for installing Calico 3.25 as the CNI (Container Network Interface) in a Kubernetes cluster.
+
+```
+# add Calico 3.25 CNI 
+### https://docs.tigera.io/calico/3.25/getting-started/kubernetes/quickstart
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
+wget https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/custom-resources.yaml
+vi custom-resources.yaml <<<<<< edit the CIDR for pods if its custom
+kubectl apply -f custom-resources.yaml
+```
+<br>
+<br>
+20 . The kubeadm token create --print-join-command command is used in a Kubernetes cluster to generate a token for joining additional nodes to the cluster, and it prints the corresponding join command.
+
+```
+kubeadm token create --print-join-command
+```
 
 
  
