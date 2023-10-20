@@ -143,6 +143,8 @@ free -m
 ### ONLY ON CONTROL NODE .. control plane install:
 kubeadm init --pod-network-cidr 10.10.0.0/16 --kubernetes-version 1.26.1 --node-name k8s-control
 ```
+<br>
+<br>
 19 .  The commands  provided are for installing Calico 3.25 as the CNI (Container Network Interface) in a Kubernetes cluster.
 
 ```
